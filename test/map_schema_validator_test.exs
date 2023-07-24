@@ -30,6 +30,19 @@ defmodule MapSchemaValidatorTest do
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
+  test "raise when missing mandatory value" do
+    schema = %{
+      key: :number,
+      not_optional: :string
+    }
+    map = %{
+      key: 1
+    }
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: not_optional", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
+
   test "optional value" do
     schema = %{
       key: :number,
@@ -161,6 +174,45 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "test from readme example" do
+    schema = %{
+      list: [
+        %{
+          inner_field: [:string, :number],
+          inner_list: [
+            %{
+              inner_leven_2_flag: [:boolean, :integer]
+            }
+          ],
+          inner_optional_flag?: :boolean
+        }
+      ]
+    }
+    map = %{
+      list: [
+        %{
+          inner_field: "value string",
+          inner_list: [
+            %{
+              inner_leven_2_flag: true
+            }
+          ],
+          inner_optional_flag: false
+        },
+        %{
+          inner_field: 10,
+          inner_list: [
+            %{
+              inner_leven_2_flag: true
+            }
+          ]
+        }
+      ]
+    }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 end

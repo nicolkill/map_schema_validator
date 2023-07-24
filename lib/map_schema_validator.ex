@@ -1,6 +1,9 @@
 defmodule MapSchemaValidator do
   @moduledoc """
-  Documentation for `MapSchemaValidator`.
+  It's a map format verifier, verify if keys/values exist in a given map, short and quick, you can specify more than one
+  format and verify list of values.
+
+  Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm) or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm)
   """
 
   defmodule InvalidMapError do
