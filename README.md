@@ -1,6 +1,9 @@
 # MapSchemaValidator
 
-**TODO: Add description**
+It's a map format verifier, verify if keys/values exist in a given map, short and quick, you can specify more than one 
+format and verify list of values.
+
+The motivation of create this library was verify that a json file content has specific format and fail in case that 
 
 ## Installation
 
