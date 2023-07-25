@@ -7,7 +7,13 @@ defmodule MapSchemaValidator.MixProject do
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      name: "Postgrex",
+      description: "Map/JSON format verifier, verify if keys/values exists.",
+      source_url: "https://github.com/nicolkill/map_schema_validator",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      package: package()
     ]
   end
 
@@ -23,6 +29,17 @@ defmodule MapSchemaValidator.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+  defp package do
+    [
+      name: "map_schema_validator",
+      files: ~w(lib .formatter.exs mix.exs README*),
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/nicolkill/map_schema_validator"},
+      source_url: "https://github.com/nicolkill/map_schema_validator",
+      homepage_url: "https://github.com/nicolkill/map_schema_validator"
     ]
   end
 end

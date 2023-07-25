@@ -6,9 +6,11 @@ format and verify list of values.
 The motivation of create this library was verify that a json file content has a specific format and fail in case that 
 not matches raises an error with the route to the invalid field
 
+[Docs here!](https://hexdocs.pm/map_schema_validator)
+
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.0), the package can be installed
 by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -19,13 +21,10 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/map_schema_validator>.
-
 ## Usage
 
-Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm) or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm)
+Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.0/MapSchemaValidator.html#validate/2) 
+or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.0/MapSchemaValidator.html#validate!/2)
 
 #### Basic
 

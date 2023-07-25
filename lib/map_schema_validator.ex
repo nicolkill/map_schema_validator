@@ -58,7 +58,7 @@ defmodule MapSchemaValidator do
   defp validate_values(schema_value, json_value, steps) when is_map(schema_value) and is_map(json_value),
        do: validate_json(schema_value, json_value, steps)
 
-  defp validate_values(schema_value, json_value, _steps), do: false
+  defp validate_values(_schema_value, _json_value, _steps), do: false
 
   @spec iterate([atom()], map(), map(), [String.t()], bool()) :: bool()
   defp iterate([], _schema, _json, _steps, _raise), do: true
