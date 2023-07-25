@@ -10,7 +10,7 @@ not matches raises an error with the route to the invalid field
 
 ## Installation
 
-If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.0), the package can be installed
+If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.3), the package can be installed
 by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -23,8 +23,8 @@ end
 
 ## Usage
 
-Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.0/MapSchemaValidator.html#validate/2) 
-or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.0/MapSchemaValidator.html#validate!/2)
+Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.3/MapSchemaValidator.html#validate/2) 
+or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.3/MapSchemaValidator.html#validate!/2)
 
 #### Basic
 
