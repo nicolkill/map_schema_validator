@@ -16,7 +16,7 @@ by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:map_schema_validator, "~> 0.1.0"}
+    {:map_schema_validator, "~> 0.1.9"}
   ]
 end
 ```
