@@ -13,7 +13,8 @@ build:
                            		compile --plt'
 
 testing:
-	$(RUN_STANDARD) mix test
+	$(RUN_STANDARD) sh -c 'apk update && MIX_ENV=test mix do local.hex --force, \
+                                               		test'
 
 iex:
 	$(RUN_STANDARD) iex -S mix

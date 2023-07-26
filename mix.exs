@@ -4,15 +4,15 @@ defmodule MapSchemaValidator.MixProject do
   def project do
     [
       app: :map_schema_validator,
-      version: "0.1.3",
+      version: "0.1.4",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "map_schema_validator",
       description: "Map/JSON format verifier, verify if keys/values exists.",
       source_url: "https://github.com/nicolkill/map_schema_validator",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       package: package()
     ]
   end
@@ -30,6 +30,7 @@ defmodule MapSchemaValidator.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
+
   defp package do
     [
       name: "map_schema_validator",

@@ -1,6 +1,6 @@
 defmodule MapSchemaValidatorTest do
   use ExUnit.Case
-#  doctest MapSchemaValidator
+  doctest MapSchemaValidator
 
   test "simple validation" do
     schema = %{
@@ -15,6 +15,7 @@ defmodule MapSchemaValidatorTest do
         inner_value: :string
       }
     }
+
     map = %{
       value_number: 1,
       value_float: 1.1,
@@ -27,6 +28,7 @@ defmodule MapSchemaValidatorTest do
         inner_value: "value string"
       }
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
@@ -35,9 +37,11 @@ defmodule MapSchemaValidatorTest do
       key: :number,
       not_optional: :string
     }
+
     map = %{
       key: 1
     }
+
     assert_raise MapSchemaValidator.InvalidMapError, "error at: not_optional", fn ->
       MapSchemaValidator.validate!(schema, map)
     end
@@ -48,18 +52,35 @@ defmodule MapSchemaValidatorTest do
       key: :number,
       optional?: :string
     }
+
     map = %{
       key: 1
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
-  test "raised failure" do
+  test "raised failure on invalid key" do
     schema = %{
       key: :number
     }
+
     map = %{
       key_invalid: 1
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: key", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
+
+  test "raised failure on invalid value" do
+    schema = %{
+      key: :number
+    }
+
+    map = %{
+      key: "value"
     }
 
     assert_raise MapSchemaValidator.InvalidMapError, "error at: key", fn ->
@@ -73,6 +94,7 @@ defmodule MapSchemaValidatorTest do
         string: :string
       }
     }
+
     map = %{
       key: %{
         "key_1" => "value string",
@@ -80,6 +102,7 @@ defmodule MapSchemaValidatorTest do
         "key_3" => "value string"
       }
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
@@ -87,13 +110,17 @@ defmodule MapSchemaValidatorTest do
     schema = %{
       key: [:number, :string]
     }
+
     map = %{
       key: 1
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+
     map = %{
       key: "value"
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
@@ -101,13 +128,17 @@ defmodule MapSchemaValidatorTest do
     schema = %{
       key: [:number, :string]
     }
+
     map = %{
       key: [1, "value"]
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+
     map = %{
       key: ["value 1", "value 2"]
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
@@ -119,6 +150,7 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+
     map = %{
       key: [
         %{
@@ -126,30 +158,69 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
 
-  @tag :skip
   test "list of object fails" do
     schema = %{
       key: [
         %{
-          inner_key: :string
+          inner_key: :string,
+          inner_key_number: :number
         }
       ]
     }
+
     map = %{
       key: [
         %{
-          inner_key: "value"
+          inner_key: "value",
+          inner_key_number: 1
         },
         %{
-          inner_key: 1
+          inner_key: "value",
+          inner_key_number: "value"
         }
       ]
     }
-    assert_raise MapSchemaValidator.InvalidMapError, "error at: key > inner_key", fn ->
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: key", fn ->
       MapSchemaValidator.validate!(schema, map)
+    end
+  end
+
+  test "list of object with nested list of objects fails" do
+    schema = %{
+      key: [
+        %{
+          inner_key: :string,
+          inner_key_list: [
+            %{
+              inner_nested_value: :string
+            }
+          ]
+        }
+      ]
+    }
+
+    map = %{
+      key: [
+        %{
+          inner_key: "value string",
+          inner_key_list: [
+            %{
+              inner_nested_value: 1
+            }
+          ]
+        }
+      ]
+    }
+
+    # todo: must show directly the nested key in lists
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: key", fn ->
+      MapSchemaValidator.validate!(schema, map)
+      |> IO.inspect(label: "not reached")
     end
   end
 
@@ -164,6 +235,7 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+
     map = %{
       key: [
         %{
@@ -174,7 +246,36 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "list of multiple object failure" do
+    schema = %{
+      key: [
+        %{
+          inner_key: :number
+        },
+        %{
+          inner_key_2: :string
+        }
+      ]
+    }
+
+    map = %{
+      key: [
+        %{
+          inner_key_2: 1
+        },
+        %{
+          inner_key: "value"
+        }
+      ]
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: key", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
   end
 
   test "test from readme example" do
@@ -191,6 +292,7 @@ defmodule MapSchemaValidatorTest do
         }
       ]
     }
+
     map = %{
       list: [
         %{

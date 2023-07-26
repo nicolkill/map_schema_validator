@@ -26,39 +26,48 @@ defmodule MapSchemaValidator do
     {mandatory, String.to_atom(key_string)}
   end
 
-  defp validate_values(schema_value, json_value, _steps)
+  defp validate_values(schema_value, json_value, steps, raise \\ true)
+
+  defp validate_values(schema_value, json_value, _steps, _raise)
        when schema_value == :float and is_float(json_value),
        do: true
 
-  defp validate_values(schema_value, json_value, _steps)
+  defp validate_values(schema_value, json_value, _steps, _raise)
        when schema_value == :integer and is_integer(json_value),
        do: true
 
-  defp validate_values(schema_value, json_value, _steps)
+  defp validate_values(schema_value, json_value, _steps, _raise)
        when schema_value == :number and is_number(json_value),
        do: true
 
-  defp validate_values(schema_value, json_value, _steps)
+  defp validate_values(schema_value, json_value, _steps, _raise)
        when schema_value == :boolean and is_boolean(json_value),
        do: true
 
-  defp validate_values(schema_value, json_value, _steps)
+  defp validate_values(schema_value, json_value, _steps, _raise)
        when schema_value == :string and is_bitstring(json_value),
        do: true
 
-  defp validate_values(schema_value, json_value, steps)
+  defp validate_values(schema_value, json_value, steps, raise)
        when is_list(schema_value) and is_list(json_value),
-       do: Enum.reduce(schema_value, true, fn v, acc ->
-         acc or Enum.any?(json_value, &validate_values(v, &1, steps))
-       end)
+       do:
+         Enum.reduce(json_value, true, fn jv, acc ->
+           acc and validate_values(schema_value, jv, steps, raise)
+         end)
 
-  defp validate_values(schema_value, json_value, steps)
+  defp validate_values(schema_value, json_value, steps, raise)
        when is_list(schema_value),
-       do: Enum.any?(schema_value, &validate_values(&1, json_value, steps))
-  defp validate_values(schema_value, json_value, steps) when is_map(schema_value) and is_map(json_value),
-       do: validate_json(schema_value, json_value, steps)
+       do: Enum.any?(schema_value, &validate_values(&1, json_value, steps, false))
 
-  defp validate_values(_schema_value, _json_value, _steps), do: false
+  defp validate_values(schema_value, json_value, steps, raise)
+       when is_list(json_value),
+       do: Enum.any?(json_value, &validate_values(schema_value, &1, steps, raise))
+
+  defp validate_values(schema_value, json_value, steps, raise)
+       when is_map(schema_value) and is_map(json_value),
+       do: validate_json(schema_value, json_value, steps, raise)
+
+  defp validate_values(_schema_value, _json_value, _steps, _raise), do: false
 
   @spec iterate([atom()], map(), map(), [String.t()], bool()) :: bool()
   defp iterate([], _schema, _json, _steps, _raise), do: true
@@ -76,10 +85,10 @@ defmodule MapSchemaValidator do
           json
           |> Map.keys()
           |> Enum.reduce(
-               true,
-               &(&2 and validate_values(key, to_string(&1), steps) and
-                 validate_values(key, Map.get(json, &1), steps))
-             )
+            true,
+            &(&2 and validate_values(key, to_string(&1), steps) and
+                validate_values(key, Map.get(json, &1), steps))
+          )
 
         {_, true} ->
           validate_values(schema_value, json_value, steps ++ [key_core])
@@ -89,9 +98,7 @@ defmodule MapSchemaValidator do
       end
 
     if next do
-      raise_next = {false, false} == {schema_value, json_value}
-
-      iterate(rest, schema, json, steps, raise_next)
+      iterate(rest, schema, json, steps, raise)
     else
       if raise do
         raise InvalidMapError, message: "error at: #{Enum.join(steps ++ [key_core], " -> ")}"
@@ -101,13 +108,13 @@ defmodule MapSchemaValidator do
     end
   end
 
-  defp validate_json(schema, json, steps \\ []) do
+  defp validate_json(schema, json, steps \\ [], raise \\ true) do
     schema_keys = Map.keys(schema)
 
     corrected_schema = MapUtils.map_to_atom_keys(schema)
     corrected_json = MapUtils.map_to_atom_keys(json)
 
-    iterate(schema_keys, corrected_schema, corrected_json, steps, true)
+    iterate(schema_keys, corrected_schema, corrected_json, steps, raise)
   end
 
   @doc """
@@ -125,7 +132,7 @@ defmodule MapSchemaValidator do
       {:ok, nil}
 
       iex> MapSchemaValidator.validate(%{key: [%{inner_key: :string}]}, %{key: [%{inner_key: 1}, %{inner_key: "value_2"}]})
-      {:error, %MapSchemaValidator.InvalidMapError{message: "error at: key -> inner_key"}}
+      {:error, %MapSchemaValidator.InvalidMapError{message: "error at: key"}}
 
   """
   @spec validate(map(), map()) :: bool()
@@ -134,7 +141,7 @@ defmodule MapSchemaValidator do
     {:ok, nil}
   rescue
     e in InvalidMapError ->
-      {:error, e.message}
+      {:error, e}
   end
 
   @doc """
@@ -152,9 +159,7 @@ defmodule MapSchemaValidator do
       :ok
 
       iex> MapSchemaValidator.validate!(%{key: [%{inner_key: :string}]}, %{key: [%{inner_key: 1}, %{inner_key: "value_2"}]})
-      ** (UndefinedFunctionError) function JsonValidator.validate/2 is undefined (module JsonValidator is not available)
-      JsonValidator.validate(%{schemas: [%{name: :string, fields: %{string: :string}, hooks?: [%{events: [:string, :integer], headers: %{string: :string}, method: :string, url: :string}]}]}, %{"schemas" => [%{"fields" => %{"age" => "number", "birth" => "datetime", "male" => "boolean", "name" => "string"}, "hooks" => [%{"events" => ["create", false], "headers" => %{"key" => "value"}, "method" => "post", "url" => "https://someurl.test/webhook"}], "name" => "users"}, %{"fields" => %{"expiration" => "datetime", "name" => "string"}, "name" => "products"}]})
-      /data/default_book.livemd#cell:hu7mznvjuk3vuqwpft3emi562ezmozpx:48: (file)
+      ** (MapSchemaValidator.InvalidMapError) error at: key
 
   """
   @spec validate!(map(), map()) :: bool()
