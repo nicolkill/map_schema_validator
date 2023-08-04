@@ -4,19 +4,17 @@ defmodule MapSchemaValidator.MixProject do
   def project do
     [
       app: :map_schema_validator,
-      version: "0.1.5",
-      elixir: "~> 1.15",
+      version: "0.1.6",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "map_schema_validator",
       description: "Map/JSON format verifier, verify if keys/values exists.",
-      source_url: "https://github.com/nicolkill/map_schema_validator",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       package: package(),
       source_url: "https://github.com/nicolkill/map_schema_validator",
       docs: [
-        main: "map_schema_validator", # The main page in the docs
         extras: ["README.md"]
       ]
     ]
@@ -42,8 +40,6 @@ defmodule MapSchemaValidator.MixProject do
       files: ~w(lib .formatter.exs mix.exs README*),
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "https://github.com/nicolkill/map_schema_validator"},
-      source_url: "https://github.com/nicolkill/map_schema_validator",
-      homepage_url: "https://github.com/nicolkill/map_schema_validator"
     ]
   end
 end

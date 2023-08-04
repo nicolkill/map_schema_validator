@@ -130,7 +130,7 @@ defmodule MapSchemaValidator do
       {:error, %MapSchemaValidator.InvalidMapError{message: "error at: key -> inner_key"}}
 
   """
-  @spec validate(map(), map()) :: bool()
+  @spec validate(map(), map()) :: {:ok | :error, any()}
   def validate(schema, json) do
     validate_json(schema, json)
     {:ok, nil}
@@ -155,9 +155,8 @@ defmodule MapSchemaValidator do
 
       iex> MapSchemaValidator.validate!(%{key: [%{inner_key: :string}]}, %{key: [%{inner_key: 1}, %{inner_key: "value_2"}]})
       ** (MapSchemaValidator.InvalidMapError) error at: key -> inner_key
-
   """
-  @spec validate!(map(), map()) :: bool()
+  @spec validate!(map(), map()) :: :ok
   def validate!(schema, json) do
     validate_json(schema, json)
     :ok

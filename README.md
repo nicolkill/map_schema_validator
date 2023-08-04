@@ -10,21 +10,21 @@ not matches raises an error with the route to the invalid field
 
 ## Installation
 
-If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.5), the package can be installed
+If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.6), the package can be installed
 by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:map_schema_validator, "~> 0.1.5"}
+    {:map_schema_validator, "~> 0.1.6"}
   ]
 end
 ```
 
 ## Usage
 
-Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.5/MapSchemaValidator.html#validate/2) 
-or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.5/MapSchemaValidator.html#validate!/2)
+Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.6/MapSchemaValidator.html#validate/2) 
+or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.6/MapSchemaValidator.html#validate!/2)
 
 #### Basic usage
 
