@@ -317,4 +317,42 @@ defmodule MapSchemaValidatorTest do
 
     assert {:ok, _} = MapSchemaValidator.validate(schema, map)
   end
+
+  test "testing with naive datetime as string" do
+    schema = %{
+      datetime: :datetime
+    }
+
+    map = %{
+      datetime: "2015-01-23 23:50:07"
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with naive datetime" do
+    schema = %{
+      datetime: :datetime
+    }
+
+    map = %{
+      datetime: ~N[2015-01-23 23:50:07]
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with invalid naive datetime" do
+    schema = %{
+      datetime: :datetime
+    }
+
+    map = %{
+      datetime: "2015-01-23"
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: datetime", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
 end

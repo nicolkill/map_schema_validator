@@ -63,7 +63,7 @@ You can check inner list of maps or even list of possible values, or even option
 field name in the schema
 
 ```
-:float, :integer, :number, :boolean, :string, [:list], %{type: :map}, [%{type: :map}]
+:float, :integer, :number, :boolean, :string, :datetime, [:list], %{type: :map}, [%{type: :map}]
 ```
 
 > the list of maps `[%{type: :map}]` are just valid with one object schema, in this case you are validating that an list
@@ -77,14 +77,16 @@ schema = %{
   value_float: :float,
   value_integer: :integer,
   value_boolean: :boolean,
-  value_string: :string
+  value_string: :string,
+  value_datetime: :datetime
 }
 map = %{
   value_number: 1,
   value_float: 1.1,
   value_integer: 1,
   value_boolean: false,
-  value_string: "value string"
+  value_string: "value string",
+  value_string: "2015-01-23 23:50:07"
 }
 
 {:ok, _} = MapSchemaValidator.validate(schema, map)
