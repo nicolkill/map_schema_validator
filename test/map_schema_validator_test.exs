@@ -9,6 +9,7 @@ defmodule MapSchemaValidatorTest do
       value_integer: :integer,
       value_boolean: :boolean,
       value_string: :string,
+      uuid: :uuid,
       value_one_of: [:string, :number],
       value_list: [:string, :number],
       value_map: %{
@@ -22,6 +23,7 @@ defmodule MapSchemaValidatorTest do
       value_integer: 1,
       value_boolean: false,
       value_string: "value string",
+      uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9",
       value_one_of: "value string",
       value_list: ["value string", 1],
       value_map: %{
@@ -428,6 +430,20 @@ defmodule MapSchemaValidatorTest do
     }
 
     assert_raise MapSchemaValidator.InvalidMapError, "error at: time", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
+
+  test "testing with invalid uuid" do
+    schema = %{
+      uuid: :uuid
+    }
+
+    map = %{
+      uuid: "fcfe5f21-8a08-4c9a-9f97"
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: uuid", fn ->
       MapSchemaValidator.validate!(schema, map)
     end
   end

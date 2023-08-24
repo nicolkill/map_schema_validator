@@ -4,7 +4,7 @@ defmodule MapSchemaValidator.MixProject do
   def project do
     [
       app: :map_schema_validator,
-      version: "0.1.6",
+      version: "0.1.7",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -30,6 +30,7 @@ defmodule MapSchemaValidator.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:uuid, "~> 1.1"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end

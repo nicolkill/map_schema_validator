@@ -10,21 +10,21 @@ not matches raises an error with the route to the invalid field
 
 ## Installation
 
-If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.6), the package can be installed
+If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.7), the package can be installed
 by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:map_schema_validator, "~> 0.1.6"}
+    {:map_schema_validator, "~> 0.1.7"}
   ]
 end
 ```
 
 ## Usage
 
-Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/0.1.6/MapSchemaValidator.html#validate/2) 
-or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/0.1.6/MapSchemaValidator.html#validate!/2)
+Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate/2) 
+or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate!/2)
 
 #### Basic usage
 
@@ -63,7 +63,7 @@ You can check inner list of maps or even list of possible values, or even option
 field name in the schema
 
 ```
-:float, :integer, :number, :boolean, :string, :datetime, [:list], %{type: :map}, [%{type: :map}]
+:float, :integer, :number, :boolean, :string, :datetime, :date, :time, :uuid, [:list], %{type: :map}, [%{type: :map}]
 ```
 
 > the list of maps `[%{type: :map}]` are just valid with one object schema, in this case you are validating that an list
@@ -80,7 +80,8 @@ schema = %{
   value_string: :string,
   value_datetime: :datetime,
   value_date: :date,
-  value_time: :time
+  value_time: :time,
+  value_uuid: :uuid
 }
 map = %{
   value_number: 1,
@@ -90,7 +91,8 @@ map = %{
   value_string: "value string",
   value_datetime: "2015-01-23 23:50:07",
   value_date: "2015-01-23",
-  value_time: "23:50:07"
+  value_time: "23:50:07",
+  value_uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
 }
 
 {:ok, _} = MapSchemaValidator.validate(schema, map)

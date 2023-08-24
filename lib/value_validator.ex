@@ -3,9 +3,18 @@ defmodule MapSchemaValidator.ValueValidator do
 
   """
 
-  @valid_basic_types [:float, :integer, :number, :boolean, :string, :datetime, :date, :time]
+  @valid_basic_types [:float, :integer, :number, :boolean, :string, :datetime, :date, :time, :uuid]
 
   def is_valid_value?(type), do: Enum.member?(@valid_basic_types, type)
+
+  def validate_values(schema_value, json_value, _steps)
+      when schema_value == :uuid and is_bitstring(json_value) do
+    {:ok, _} = UUID.info(json_value)
+    true
+  rescue
+    _ ->
+      false
+  end
 
   def validate_values(schema_value, json_value, _steps)
       when schema_value == :time and is_bitstring(json_value) do
