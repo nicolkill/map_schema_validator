@@ -355,4 +355,80 @@ defmodule MapSchemaValidatorTest do
       MapSchemaValidator.validate!(schema, map)
     end
   end
+
+  test "testing with date as string" do
+    schema = %{
+      date: :date
+    }
+
+    map = %{
+      date: "2015-01-23"
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with date" do
+    schema = %{
+      date: :date
+    }
+
+    map = %{
+      date: ~D[2015-01-23]
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with invalid date" do
+    schema = %{
+      date: :date
+    }
+
+    map = %{
+      date: "23:50:07"
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: date", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
+
+  test "testing with time as string" do
+    schema = %{
+      time: :time
+    }
+
+    map = %{
+      time: "23:50:07"
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with time" do
+    schema = %{
+      time: :time
+    }
+
+    map = %{
+      time: ~T[23:50:07]
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  test "testing with invalid time" do
+    schema = %{
+      time: :time
+    }
+
+    map = %{
+      time: "2015-01-23"
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError, "error at: time", fn ->
+      MapSchemaValidator.validate!(schema, map)
+    end
+  end
 end

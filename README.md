@@ -78,7 +78,9 @@ schema = %{
   value_integer: :integer,
   value_boolean: :boolean,
   value_string: :string,
-  value_datetime: :datetime
+  value_datetime: :datetime,
+  value_date: :date,
+  value_time: :time
 }
 map = %{
   value_number: 1,
@@ -86,7 +88,9 @@ map = %{
   value_integer: 1,
   value_boolean: false,
   value_string: "value string",
-  value_string: "2015-01-23 23:50:07"
+  value_datetime: "2015-01-23 23:50:07",
+  value_date: "2015-01-23",
+  value_time: "23:50:07"
 }
 
 {:ok, _} = MapSchemaValidator.validate(schema, map)

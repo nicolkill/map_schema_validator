@@ -3,9 +3,31 @@ defmodule MapSchemaValidator.ValueValidator do
 
   """
 
-  @valid_basic_types [:float, :integer, :number, :boolean, :string, :datetime]
+  @valid_basic_types [:float, :integer, :number, :boolean, :string, :datetime, :date, :time]
 
   def is_valid_value?(type), do: Enum.member?(@valid_basic_types, type)
+
+  def validate_values(schema_value, json_value, _steps)
+      when schema_value == :time and is_bitstring(json_value) do
+    {:ok, _} = Time.from_iso8601(json_value)
+    true
+  rescue
+    _ ->
+      false
+  end
+  def validate_values(schema_value, %Time{} = _json_value, _steps)
+      when schema_value == :time, do: true
+
+  def validate_values(schema_value, json_value, _steps)
+      when schema_value == :date and is_bitstring(json_value) do
+    {:ok, _} = Date.from_iso8601(json_value)
+    true
+  rescue
+    _ ->
+      false
+  end
+  def validate_values(schema_value, %Date{} = _json_value, _steps)
+      when schema_value == :date, do: true
 
   def validate_values(schema_value, json_value, _steps)
       when schema_value == :datetime and is_bitstring(json_value) do
