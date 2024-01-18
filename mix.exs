@@ -40,7 +40,7 @@ defmodule MapSchemaValidator.MixProject do
       name: "map_schema_validator",
       files: ~w(lib .formatter.exs mix.exs README*),
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/nicolkill/map_schema_validator"},
+      links: %{"GitHub" => "https://github.com/nicolkill/map_schema_validator"}
     ]
   end
 end

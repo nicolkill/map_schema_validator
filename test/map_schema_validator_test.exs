@@ -219,9 +219,11 @@ defmodule MapSchemaValidatorTest do
       ]
     }
 
-    assert_raise MapSchemaValidator.InvalidMapError, "error at: key -> inner_key_list -> inner_nested_value", fn ->
-      MapSchemaValidator.validate!(schema, map)
-    end
+    assert_raise MapSchemaValidator.InvalidMapError,
+                 "error at: key -> inner_key_list -> inner_nested_value",
+                 fn ->
+                   MapSchemaValidator.validate!(schema, map)
+                 end
   end
 
   @tag :skip
@@ -446,5 +448,100 @@ defmodule MapSchemaValidatorTest do
     assert_raise MapSchemaValidator.InvalidMapError, "error at: uuid", fn ->
       MapSchemaValidator.validate!(schema, map)
     end
+  end
+
+  # MapSchemaValidator.Schema tests
+
+  test "mirror of the module schema but in the traditional way" do
+    schema = %{
+      example_inner: %{
+        example_string: :string,
+        example_uuid: :uuid
+      },
+      example_string: :string,
+      example_uuid: :uuid
+    }
+
+    map = %{
+      example_inner: %{
+        example_string: "example string",
+        example_uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
+      },
+      example_string: "example string",
+      example_uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
+    }
+
+    assert {:ok, _} = MapSchemaValidator.validate(schema, map)
+  end
+
+  defmodule InnerSchemaTest do
+    use MapSchemaValidator.Schema
+
+    field(:example_string, :string)
+    field(:example_uuid, :uuid)
+  end
+
+  defmodule SchemaTest do
+    use MapSchemaValidator.Schema
+
+    field(:example_string, :string)
+    field(:example_uuid, :uuid)
+    field(:example_inner, InnerSchemaTest)
+  end
+
+  test "reads the schema of the module" do
+    assert %{
+             example_inner: %{
+               example_string: :string,
+               example_uuid: :uuid
+             },
+             example_string: :string,
+             example_uuid: :uuid
+           } = SchemaTest.schema()
+  end
+
+  test "validates a map with the module" do
+    map = %{
+      example_inner: %{
+        example_string: "example string",
+        example_uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
+      },
+      example_string: "example string",
+      example_uuid: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
+    }
+
+    assert {:ok, _} = SchemaTest.validate(map)
+  end
+
+  test "validates a map with the module with error" do
+    map = %{
+      example_inner: %{
+        example_string: "example string",
+        example_uuid: "fcfe5f21-8a08-4c9a"
+      },
+      example_string: "example string",
+      example_uuid: "fcfe5f21-8a08-4c9a"
+    }
+
+    assert_raise MapSchemaValidator.InvalidMapError,
+                 "error at: example_inner -> example_uuid",
+                 fn ->
+                   SchemaTest.validate!(map)
+                 end
+  end
+
+  defmodule SchemaWithErrorTest do
+    use MapSchemaValidator.Schema
+
+    field(:example_string, :string)
+    field(:example_wrong_module, String)
+  end
+
+  test "error in the inner module" do
+    assert_raise ArgumentError,
+                 "field Elixir.String not uses the MapSchemaValidator.Schema module",
+                 fn ->
+                   SchemaWithErrorTest.schema()
+                 end
   end
 end

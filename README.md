@@ -26,7 +26,12 @@ end
 Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate/2) 
 or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate!/2)
 
+Also, you can use the module [`MapSchemaValidator.Schema`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.Schema.html)
+to create a schema with all the properties and directly validate the maps without have the schema in other place
+
 #### Basic usage
+
+With 
 
 ```elixir
 schema = %{
@@ -55,6 +60,34 @@ rescue
   e in MapSchemaValidator.InvalidMapError -> 
     e.message
 end
+```
+
+With 
+
+```elixir
+defmodule InnerSchemaModule do
+  use MapSchemaValidator.Schema
+
+  field :field_string_inner, :string
+  field :field_uuid_inner, :uuid
+end
+
+defmodule SchemaModule do
+  use MapSchemaValidator.Schema
+
+  field :field_string, :string
+  field :field_inner_module, InnerSchemaModule
+end
+
+map = %{
+  field_inner_module: %{
+    field_string_inner: "example string",
+    field_uuid_inner: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
+  },
+  field_string: "example string"
+}
+
+{:ok, _} = SchemaModule.validate(map)
 ```
 
 #### Possible values

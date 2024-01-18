@@ -43,11 +43,11 @@ defmodule MapSchemaValidator do
           |> Enum.reduce(
             true,
             &(&2 and ValueValidator.validate_values(key, to_string(&1), steps) and
-              ValueValidator.validate_values(key, Map.get(json, &1), steps))
+                ValueValidator.validate_values(key, Map.get(json, &1), steps))
           )
 
         {_, true} ->
-         ValueValidator.validate_values(schema_value, json_value, steps ++ [key_core])
+          ValueValidator.validate_values(schema_value, json_value, steps ++ [key_core])
 
         _ ->
           !mandatory
