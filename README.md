@@ -31,7 +31,7 @@ to create a schema with all the properties and directly validate the maps withou
 
 #### Basic usage
 
-With 
+With [`MapSchemaValidator`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html)
 
 ```elixir
 schema = %{
@@ -62,7 +62,7 @@ rescue
 end
 ```
 
-With 
+With [`MapSchemaValidator.Schema`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.Schema.html)
 
 ```elixir
 defmodule InnerSchemaModule do
