@@ -282,7 +282,7 @@ defmodule MapSchemaValidatorTest do
     end
   end
 
-  test "test from readme example" do
+  test "test from README.md example" do
     schema = %{
       list: [
         %{
@@ -543,5 +543,51 @@ defmodule MapSchemaValidatorTest do
                  fn ->
                    SchemaWithErrorTest.schema()
                  end
+  end
+
+  defmodule InnerListElementModule do
+    use MapSchemaValidator.Schema
+
+    field(:inner_leven_2_flag, [:boolean, :integer])
+  end
+
+  defmodule ListElementModule do
+    use MapSchemaValidator.Schema
+
+    field(:inner_field, [:string, :number])
+    field(:inner_list, [InnerListElementModule])
+    field(:inner_optional_flag?, :boolean)
+  end
+
+  defmodule SchemaModule do
+    use MapSchemaValidator.Schema
+
+    field(:list, [ListElementModule])
+  end
+
+  test "complete schema module example from README.md" do
+    map = %{
+      list: [
+        %{
+          inner_field: "value string",
+          inner_list: [
+            %{
+              inner_leven_2_flag: true
+            }
+          ],
+          inner_optional_flag: false
+        },
+        %{
+          inner_field: 10,
+          inner_list: [
+            %{
+              inner_leven_2_flag: true
+            }
+          ]
+        }
+      ]
+    }
+
+    assert {:ok, _} = SchemaModule.validate(map)
   end
 end

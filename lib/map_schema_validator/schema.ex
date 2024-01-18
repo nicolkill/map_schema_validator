@@ -9,23 +9,30 @@ defmodule MapSchemaValidator.Schema do
     quote do
       import MapSchemaValidator.Schema
 
+      defp process_type(t) when is_list(t) do
+        Enum.map(t, &process_type/1)
+      end
+
+      defp process_type(t) do
+        case ValueValidator.is_valid_value?(t) do
+          true ->
+            t
+
+          _ ->
+            try do
+              inner_schema = apply(t, :schema, [])
+            rescue
+              _ ->
+                raise ArgumentError,
+                  message: "field #{t} not uses the MapSchemaValidator.Schema module"
+            end
+        end
+      end
+
       def schema() do
         fields()
         |> Enum.reduce(%{}, fn {f, t}, acc ->
-          case ValueValidator.is_valid_value?(t) do
-            true ->
-              Map.put(acc, f, t)
-
-            _ ->
-              try do
-                inner_schema = apply(t, :schema, [])
-                Map.put(acc, f, inner_schema)
-              rescue
-                _ ->
-                  raise ArgumentError,
-                    message: "field #{t} not uses the MapSchemaValidator.Schema module"
-              end
-          end
+          Map.put(acc, f, process_type(t))
         end)
       end
 

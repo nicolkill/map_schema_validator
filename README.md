@@ -10,18 +10,18 @@ not matches raises an error with the route to the invalid field
 
 ## Installation
 
-If [available in Hex](https://hex.pm/packages/map_schema_validator/0.1.7), the package can be installed
+If [available in Hex](https://hex.pm/packages/map_schema_validator), the package can be installed
 by adding `map_schema_validator` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:map_schema_validator, "~> 0.1.7"}
+    {:map_schema_validator, "~> 0.1.8"}
   ]
 end
 ```
 
-## Usage
+## How to use it?
 
 Just use the function [`MapSchemaValidator.validate/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate/2) 
 or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html#validate!/2)
@@ -29,16 +29,18 @@ or [`MapSchemaValidator.validate!/2`](https://hexdocs.pm/map_schema_validator/Ma
 Also, you can use the module [`MapSchemaValidator.Schema`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.Schema.html)
 to create a schema with all the properties and directly validate the maps without have the schema in other place
 
-#### Basic usage
+## Basic usage
 
-With [`MapSchemaValidator`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.html)
+A basic example of the way to use
 
 ```elixir
+# MapSchemaValidator
 schema = %{
   field: %{
     inner_field: :string
   }
 }
+
 map = %{
   field: %{
     inner_field: "value"
@@ -60,37 +62,25 @@ rescue
   e in MapSchemaValidator.InvalidMapError -> 
     e.message
 end
-```
 
-With [`MapSchemaValidator.Schema`](https://hexdocs.pm/map_schema_validator/MapSchemaValidator.Schema.html)
+# MapSchemaValidator.Schema
 
-```elixir
 defmodule InnerSchemaModule do
   use MapSchemaValidator.Schema
 
-  field :field_string_inner, :string
-  field :field_uuid_inner, :uuid
+  field :inner_field, :string
 end
 
 defmodule SchemaModule do
   use MapSchemaValidator.Schema
 
-  field :field_string, :string
-  field :field_inner_module, InnerSchemaModule
+  field :field, InnerSchemaModule
 end
-
-map = %{
-  field_inner_module: %{
-    field_string_inner: "example string",
-    field_uuid_inner: "fcfe5f21-8a08-4c9a-9f97-29d2fd6a27b9"
-  },
-  field_string: "example string"
-}
 
 {:ok, _} = SchemaModule.validate(map)
 ```
 
-#### Possible values
+## Possible values
 
 You can check inner list of maps or even list of possible values, or even optional values using `?` at the end of the
 field name in the schema
@@ -239,7 +229,7 @@ map = %{
 
 > In this case are allowed just one schema per list, multiple are work in progress
 
-#### Advanced example
+## Advanced example
 
 ```elixir
 schema = %{
@@ -278,4 +268,26 @@ map = %{
 }
 
 {:ok, _} = MapSchemaValidator.validate(schema, map)
+
+defmodule InnerListElementModule do
+  use MapSchemaValidator.Schema
+
+  field :inner_leven_2_flag, [:boolean, :integer]
+end
+
+defmodule ListElementModule do
+  use MapSchemaValidator.Schema
+
+  field :inner_field, [:string, :number]
+  field :inner_list, [InnerListElementModule]
+  field :inner_optional_flag?, :boolean
+end
+
+defmodule SchemaModule do
+  use MapSchemaValidator.Schema
+
+  field :list, [ListElementModule]
+end
+
+{:ok, _} = SchemaModule.validate(map)
 ```
